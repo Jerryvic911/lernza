@@ -97,6 +97,13 @@
                 },
                 {
                   "i128": "3000"
+                },
+                {
+                  "vec": [
+                    {
+                      "symbol": "HostOnly"
+                    }
+                  ]
                 }
               ]
             }
@@ -143,6 +150,13 @@
                 },
                 {
                   "i128": "2000"
+                },
+                {
+                  "vec": [
+                    {
+                      "symbol": "HostOnly"
+                    }
+                  ]
                 }
               ]
             }
@@ -412,6 +426,37 @@
               "durability": "persistent",
               "val": {
                 "address": "CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAK3IM"
+              }
+            }
+          },
+          "ext": "v0"
+        },
+        "live_until": 518400
+      },
+      {
+        "entry": {
+          "last_modified_ledger_seq": 0,
+          "data": {
+            "contract_data": {
+              "ext": "v0",
+              "contract": "CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAITA4",
+              "key": {
+                "vec": [
+                  {
+                    "symbol": "QuestFundingModel"
+                  },
+                  {
+                    "u32": 0
+                  }
+                ]
+              },
+              "durability": "persistent",
+              "val": {
+                "vec": [
+                  {
+                    "symbol": "HostOnly"
+                  }
+                ]
               }
             }
           },

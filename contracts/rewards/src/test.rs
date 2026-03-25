@@ -105,7 +105,7 @@ fn test_fund_invalid_amount() {
     let (env, client, _cid, token_addr, quest_client, _quest_id) = setup();
     let owner = Address::generate(&env);
 
-    let q_id = quest_client.create_quest(
+    let _q_id = quest_client.create_quest(
         &owner,
         &String::from_str(&env, "Test"),
         &String::from_str(&env, "Desc"),
