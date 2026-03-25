@@ -23,7 +23,7 @@ import { milestoneClient } from "@/lib/contracts/milestone"
 import { rewardsClient } from "@/lib/contracts/rewards"
 
 interface DashboardProps {
-  onSelectWorkspace: (id: number) => void
+  onSelectQuest: (id: number) => void
 }
 
 interface QuestWithStats extends QuestInfo {
