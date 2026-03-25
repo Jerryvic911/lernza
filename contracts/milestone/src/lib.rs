@@ -248,25 +248,36 @@ impl MilestoneContract {
     pub fn set_distribution_mode(
         env: Env,
         owner: Address,
-        workspace_id: u32,
+        quest_id: u32,
         mode: DistributionMode,
         flat_reward: i128,
     ) -> Result<(), Error> {
         owner.require_auth();
-        Self::require_owner(&env, workspace_id, &owner)?;
+
+        // Cross-contract validation: verify caller is the actual quest owner
+        let quest_contract_addr: Address = env
+            .storage()
+            .instance()
+            .get(&DataKey::QuestContract)
+            .ok_or(Error::NotInitialized)?;
+        let quest_client = QuestClient::new(&env, &quest_contract_addr);
+        let quest_info = quest_client.get_quest(&quest_id);
+        if quest_info.owner != owner {
+            return Err(Error::OwnerMismatch);
+        }
 
         if matches!(mode, DistributionMode::Flat) && flat_reward <= 0 {
             return Err(Error::InvalidAmount);
         }
 
-        let mode_key = DataKey::Mode(workspace_id);
+        let mode_key = DataKey::Mode(quest_id);
         env.storage().persistent().set(&mode_key, &mode);
         env.storage()
             .persistent()
             .extend_ttl(&mode_key, THRESHOLD, BUMP);
 
         if matches!(mode, DistributionMode::Flat) {
-            let flat_key = DataKey::FlatReward(workspace_id);
+            let flat_key = DataKey::FlatReward(quest_id);
             env.storage().persistent().set(&flat_key, &flat_reward);
             env.storage()
                 .persistent()
@@ -296,7 +307,6 @@ impl MilestoneContract {
 
         let quest_client = QuestClient::new(&env, &quest_contract_addr);
         let quest_info = quest_client.get_quest(&quest_id);
-
         if quest_info.owner != owner {
             return Err(Error::Unauthorized);
         }
@@ -696,7 +706,7 @@ impl MilestoneContract {
         }
 
         let fully_completed = 0u32;
-        for _i in 0..total_milestones {
+        for _ in 0..total_milestones {
             // Count enrollees who completed this milestone
             // This is a simplified approach - in production we'd need to iterate over enrollees
             // For now, return a placeholder based on available data
@@ -718,13 +728,6 @@ impl MilestoneContract {
 
     fn bump_ms(env: &Env, key: &DataKey) {
         env.storage().persistent().extend_ttl(key, THRESHOLD, BUMP);
-    }
-
-    fn require_owner(_env: &Env, _workspace_id: u32, _owner: &Address) -> Result<(), Error> {
-        // This is a placeholder implementation
-        // In a real implementation, you'd check workspace ownership
-        // For now, we'll assume the caller is authorized if they have the address
-        Ok(())
     }
 
     fn require_quest_owner(env: &Env, quest_id: u32, owner: &Address) -> Result<(), Error> {
